@@ -1,0 +1,14 @@
+[server]
+enableCORS = false
+enableXsrfProtection = false
+maxUploadSize = 20
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+primaryColor = "#5867DD"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F8F9FA"
+textColor = "#31373F"
+font = "sans serif"
