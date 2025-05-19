@@ -3,7 +3,7 @@ from ultralytics import YOLO
 from PIL import Image
 import os
 import warnings
-
+import urllib.request
 
 # Set page configuration
 st.set_page_config(page_title="My YOLO11 Portfolio", layout="wide")
@@ -15,7 +15,12 @@ page = st.sidebar.radio("Go to", ["About Me", "YOLO11 Project", "Object Detectio
 # Load YOLO11 model
 @st.cache_resource
 def load_model():
-    return YOLO("yolo11n.pt")
+    # Check if model exists, if not download it
+    model_path = "yolo11n.pt"
+    if not os.path.exists(model_path):
+        with st.spinner("Downloading YOLO model... This might take a minute."):
+            urllib.request.urlretrieve("https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt", model_path)
+    return YOLO(model_path)
 
 model = load_model()
 
@@ -24,10 +29,8 @@ if page == "About Me":
     st.title("Welcome to My Portfolio")
     col1, col2 = st.columns([1, 2])
     with col1:
-        if os.path.exists("assets/profile.jpg"):
-            st.image("assets/profile.jpg", width=200)
-        else:
-            st.write("Profile picture placeholder")
+        # Use a placeholder image if profile.jpg doesn't exist
+        st.image("https://via.placeholder.com/200x200.png?text=Profile+Photo", width=200)
     with col2:
         st.header("About Me")
         st.write("""
@@ -78,7 +81,7 @@ elif page == "Object Detection App":
             result_image_pil = Image.fromarray(result_image)
             st.image(result_image_pil, caption="Detected Objects", use_container_width=True)
             
-            # Optional: Show detection details
+            # Optional: Show detection results
             st.write("**Detection Results**:")
             for det in results[0].boxes:
                 label = results[0].names[int(det.cls)]
