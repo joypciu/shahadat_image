@@ -25,7 +25,8 @@ def load_model():
     model_path = "yolov11n.pt"
     if not os.path.exists(model_path):
         with st.spinner("Downloading YOLOv11n model... This might take a minute."):
-            urllib.request.urlretrieve("https://github.com/ultralytics/assets/releases/download/v8.3.15/yolov11n.pt", model_path)
+            urllib.request.urlretrieve("https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt", model_path)
+            
     return YOLO(model_path)
 
 # Try to load model with error handling
