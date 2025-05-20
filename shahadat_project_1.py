@@ -2,12 +2,14 @@ import streamlit as st
 from ultralytics import YOLO
 from PIL import Image
 import os
-import warnings
 import urllib.request
 import torch
 
 # Set page configuration
 st.set_page_config(page_title="YOLO Object Detection Portfolio", layout="wide")
+
+# Debug Streamlit version
+st.write(f"Streamlit version: {st.__version__}")
 
 # Sidebar for navigation
 st.sidebar.title("Navigation")
@@ -23,7 +25,7 @@ def load_model():
     model_path = "yolov11n.pt"
     if not os.path.exists(model_path):
         with st.spinner("Downloading YOLOv11n model... This might take a minute."):
-            urllib.request.urlretrieve("https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt", model_path)
+            urllib.request.urlretrieve("https://github.com/ultralytics/assets/releases/download/v8.3.15/yolov11n.pt", model_path)
     return YOLO(model_path)
 
 # Try to load model with error handling
@@ -80,7 +82,11 @@ elif page == "Object Detection App":
     if uploaded_file is not None:
         # Load and display the uploaded image
         image = Image.open(uploaded_file)
-        st.image(image, caption="Uploaded Image", use_container_width=True)
+        # Conditionally use use_container_width based on Streamlit version
+        try:
+            st.image(image, caption="Uploaded Image", use_container_width=True)
+        except TypeError:
+            st.image(image, caption="Uploaded Image", width=None)  # Fallback for older Streamlit versions
         
         # Process image with YOLO
         if model is not None:
@@ -91,7 +97,11 @@ elif page == "Object Detection App":
                     # Save and display the result
                     result_image = results[0].plot()  # Get annotated image with boxes and labels
                     result_image_pil = Image.fromarray(result_image)
-                    st.image(result_image_pil, caption="Detected Objects", use_container_width=True)
+                    # Conditionally use use_container_width for result image
+                    try:
+                        st.image(result_image_pil, caption="Detected Objects", use_container_width=True)
+                    except TypeError:
+                        st.image(result_image_pil, caption="Detected Objects", width=None)  # Fallback for older Streamlit versions
                     
                     # Show detection results
                     st.write("**Detection Results:**")
